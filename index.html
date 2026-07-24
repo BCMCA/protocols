@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BCMCA EMS Protocols</title>
+<meta name="theme-color" content="#14264D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+:root{
+  --navy:#14264D; --navy2:#1D3463; --gold:#BF9E4C; --paper:#FAFAF8;
+  --ink:#1A1A1A; --mut:#5A5F6A; --line:#E3E1DA; --hit:#FFF4CE;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 16px 0}
+.brand{display:flex;align-items:baseline;gap:10px;max-width:760px;margin:0 auto}
+.brand h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.02em}
+.brand .v{color:var(--gold);font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.sub{max-width:760px;margin:2px auto 0;font-size:12px;color:#B9C2D6}
+.searchwrap{position:sticky;top:0;z-index:5;background:var(--navy);
+  padding:10px 16px 12px;box-shadow:0 2px 8px rgba(10,20,45,.25)}
+.searchbar{max-width:760px;margin:0 auto;position:relative}
+.searchbar input{width:100%;padding:12px 40px 12px 14px;font-size:16px;border:0;
+  border-radius:8px;background:#fff;color:var(--ink)}
+.searchbar input:focus{outline:3px solid var(--gold)}
+.searchbar .clr{position:absolute;right:4px;top:4px;bottom:4px;width:36px;border:0;
+  background:none;color:var(--mut);font-size:20px;border-radius:6px;display:none}
+main{max-width:760px;margin:0 auto;padding:8px 12px 40px}
+.sec{margin-top:14px}
+.sechead{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:none;border:0;padding:10px 4px;cursor:pointer}
+.sechead .no{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;
+  color:var(--gold);font-size:13px;min-width:24px}
+.sechead .nm{font-weight:700;font-size:15px;color:var(--navy);flex:1}
+.sechead .ct{font-size:12px;color:var(--mut)}
+.sechead .ar{color:var(--mut);transition:transform .15s}
+.sec.open .ar{transform:rotate(90deg)}
+.seclist{display:none;border-top:2px solid var(--navy);margin-top:2px}
+.sec.open .seclist{display:block}
+a.prot{display:flex;gap:12px;align-items:center;padding:13px 6px;
+  border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+a.prot:active{background:#EFECE4}
+.pn{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;font-weight:700;
+  color:#fff;background:var(--navy);border-left:3px solid var(--gold);
+  padding:4px 7px;border-radius:3px;min-width:58px;text-align:center;flex:none}
+.pt{font-size:15px}
+.pend{opacity:.55}
+.pend .pn{background:var(--mut);border-left-color:#999}
+.pend .badge{font-size:11px;color:var(--mut);font-style:italic;margin-left:auto;flex:none}
+.hitnote{font-size:12px;color:var(--mut);margin-left:auto;flex:none;background:var(--hit);
+  padding:2px 7px;border-radius:10px}
+.empty{padding:34px 10px;color:var(--mut);text-align:center;font-size:15px}
+.tools{margin:22px 0 8px;border-top:2px solid var(--navy);padding-top:14px;
+  display:flex;flex-wrap:wrap;gap:10px}
+.btn{flex:1 1 220px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);
+  font-weight:700;font-size:14px;padding:12px;border-radius:8px;cursor:pointer;text-align:center;
+  text-decoration:none}
+.btn:disabled{opacity:.6}
+.prog{font-weight:400;font-size:12px;display:block;color:var(--mut)}
+footer{max-width:760px;margin:0 auto;padding:8px 16px 46px;font-size:12px;color:var(--mut)}
+footer .rule{border-top:1px solid var(--line);margin-bottom:10px}
+.offline-pill{display:none;position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;font-size:12px;padding:6px 14px;border-radius:14px;z-index:9}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>BCMCA EMS Protocols</h1><span class="v">2026-07-23</span></div>
+  <div class="sub">Berrien County Medical Control Authority</div>
+  <div class="searchwrap" role="search">
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Search protocols (title or full text)"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        aria-label="Search protocols">
+      <button class="clr" id="clr" aria-label="Clear search">&times;</button>
+    </div>
+  </div>
+</header>
+<main>
+  <div id="list"></div>
+  <div class="tools">
+    <button class="btn" id="saveall">Save all protocols for offline use
+      <span class="prog" id="prog"></span></button>
+    <a class="btn" href="binder.pdf">Full binder (single PDF)</a>
+  </div>
+</main>
+<footer>
+  <div class="rule"></div>
+  Reference copy of the Berrien County MCA protocol set. The executed protocols on file with
+  the MCA and MDHHS govern. 7.29 Mechanical CPR Device is pending adoption and not yet posted.<br>
+  Jonathan Beyer, DO, FAEMS, Medical Director &middot; Compiled 2026-07-23
+</footer>
+<div class="offline-pill" id="pill">Offline: showing saved copy</div>
+<script>
+const P = [{"n":"1.1","t":"General Pre-Hospital Care","s":1,"f":"pdfs/1-1.pdf"},{"n":"1.2","t":"Abdominal Pain (Non-Traumatic)","s":1,"f":"pdfs/1-2.pdf"},{"n":"1.3","t":"Nausea & Vomiting","s":1,"f":"pdfs/1-3.pdf"},{"n":"1.4","t":"Syncope","s":1,"f":"pdfs/1-4.pdf"},{"n":"1.5","t":"Shock","s":1,"f":"pdfs/1-5.pdf"},{"n":"1.6","t":"Anaphylaxis/Allergic Reaction","s":1,"f":"pdfs/1-6.pdf"},{"n":"1.7","t":"Adrenal Crisis","s":1,"f":"pdfs/1-7.pdf"},{"n":"1.8","t":"Behavioral Health Emergencies","s":1,"f":"pdfs/1-8.pdf"},{"n":"1.9","t":"Opioid Overdose Treatment and Prevention","s":1,"f":"pdfs/1-9.pdf"},{"n":"1.10","t":"Foreign Body Airway Obstruction","s":1,"f":"pdfs/1-10.pdf"},{"n":"1.11","t":"Ground Level Falls (Berrien County)","s":1,"f":"pdfs/1-11.pdf"},{"n":"2.1","t":"Adult/Pediatric Trauma Triage","s":2,"f":"pdfs/2-1.pdf"},{"n":"2.2","t":"General Trauma","s":2,"f":"pdfs/2-2.pdf"},{"n":"2.3","t":"Burns","s":2,"f":"pdfs/2-3.pdf"},{"n":"2.4","t":"General Crush Injury","s":2,"f":"pdfs/2-4.pdf"},{"n":"2.5","t":"Soft Tissue and Orthopedic Injuries","s":2,"f":"pdfs/2-5.pdf"},{"n":"2.6","t":"Spinal Injury Assessment","s":2,"f":"pdfs/2-6.pdf"},{"n":"2.7","t":"Traumatic Arrest","s":2,"f":"pdfs/2-7.pdf"},{"n":"2.8","t":"Drowning/Submersion Injury","s":2,"f":"pdfs/2-8.pdf"},{"n":"2.9","t":"Poisoning/Overdose/Environmental Exposure","s":2,"f":"pdfs/2-9.pdf"},{"n":"2.10","t":"Heat Emergencies","s":2,"f":"pdfs/2-10.pdf"},{"n":"2.11","t":"Hypothermia/Frostbite","s":2,"f":"pdfs/2-11.pdf"},{"n":"2.12","t":"Head Injury (Moderate & Severe TBI)","s":2,"f":"pdfs/2-12.pdf"},{"n":"2.13","t":"Bleeding Control (BCON)","s":2,"f":"pdfs/2-13.pdf"},{"n":"2.14","t":"Hemorrhagic Shock","s":2,"f":"pdfs/2-14.pdf"},{"n":"2.15","t":"Sexual Assault","s":2,"f":"pdfs/2-15.pdf"},{"n":"3.1","t":"Altered Mental Status","s":3,"f":"pdfs/3-1.pdf"},{"n":"3.2","t":"Stroke or Suspected Stroke","s":3,"f":"pdfs/3-2.pdf"},{"n":"3.3","t":"Respiratory Distress","s":3,"f":"pdfs/3-3.pdf"},{"n":"3.4","t":"Seizures","s":3,"f":"pdfs/3-4.pdf"},{"n":"3.5","t":"Sepsis","s":3,"f":"pdfs/3-5.pdf"},{"n":"3.6","t":"Hyperactive Delirium Syndrome with Severe Agitation","s":3,"f":"pdfs/3-6.pdf"},{"n":"3.7","t":"Crashing Adult/Impending Arrest","s":3,"f":"pdfs/3-7.pdf"},{"n":"4.1","t":"Pediatric Medication Emergency Dosing and Intervention Cards","s":4,"f":"pdfs/4-1.pdf"},{"n":"4.2","t":"Childbirth & Related Obstetrical Emergencies","s":4,"f":"pdfs/4-2.pdf"},{"n":"4.3","t":"Newborn/Neonatal Assessment and Resuscitation","s":4,"f":"pdfs/4-3.pdf"},{"n":"4.4","t":"Pediatric Altered Mental Status","s":4,"f":"pdfs/4-4.pdf"},{"n":"4.5","t":"Pediatric Respiratory Distress, Failure, or Arrest","s":4,"f":"pdfs/4-5.pdf"},{"n":"4.6","t":"Pediatric Fever","s":4,"f":"pdfs/4-6.pdf"},{"n":"4.7","t":"Pediatric Seizures","s":4,"f":"pdfs/4-7.pdf"},{"n":"4.8","t":"Safe Transportation of Children in Ambulances","s":4,"f":"pdfs/4-8.pdf"},{"n":"4.9","t":"Pediatric Crashing Patient/Impending Arrest","s":4,"f":"pdfs/4-9.pdf"},{"n":"5.1","t":"Cardiac Arrest - General","s":5,"f":"pdfs/5-1.pdf"},{"n":"5.2","t":"Bradycardia","s":5,"f":"pdfs/5-2.pdf"},{"n":"5.3","t":"Tachycardia","s":5,"f":"pdfs/5-3.pdf"},{"n":"5.4","t":"Pulmonary Edema/Cardiogenic Shock","s":5,"f":"pdfs/5-4.pdf"},{"n":"5.5","t":"Chest Pain/Acute Coronary Syndrome","s":5,"f":"pdfs/5-5.pdf"},{"n":"5.6","t":"Return of Spontaneous Circulation (ROSC)","s":5,"f":"pdfs/5-6.pdf"},{"n":"6.1","t":"Pediatric Cardiac Arrest - General","s":6,"f":"pdfs/6-1.pdf"},{"n":"6.2","t":"Pediatric Symptomatic Bradycardia","s":6,"f":"pdfs/6-2.pdf"},{"n":"6.3","t":"Pediatric Tachycardia","s":6,"f":"pdfs/6-3.pdf"},{"n":"6.4","t":"Pediatric Return of Spontaneous Circulation (ROSC)","s":6,"f":"pdfs/6-4.pdf"},{"n":"7.1","t":"12-Lead ECG","s":7,"f":"pdfs/7-1.pdf"},{"n":"7.2","t":"Child Abuse and Neglect","s":7,"f":"pdfs/7-2.pdf"},{"n":"7.3","t":"Crime Scene Management","s":7,"f":"pdfs/7-3.pdf"},{"n":"7.4","t":"Vulnerable Adult Abuse, Neglect or Exploitation","s":7,"f":"pdfs/7-4.pdf"},{"n":"7.5","t":"CPAP","s":7,"f":"pdfs/7-5.pdf"},{"n":"7.6","t":"Dead on Scene & Termination of Resuscitation","s":7,"f":"pdfs/7-6.pdf"},{"n":"7.7","t":"Do Not Resuscitate","s":7,"f":"pdfs/7-7.pdf"},{"n":"7.8","t":"Electrical Therapy","s":7,"f":"pdfs/7-8.pdf"},{"n":"7.8(S)","t":"Double Sequential Defibrillation (MCA Optional)","s":7,"f":"pdfs/7-8S.pdf"},{"n":"7.9","t":"Airway Management","s":7,"f":"pdfs/7-9.pdf"},{"n":"7.10","t":"Helmet Removal","s":7,"f":"pdfs/7-10.pdf"},{"n":"7.12","t":"Oxygen Administration","s":7,"f":"pdfs/7-12.pdf"},{"n":"7.13","t":"Pain Management","s":7,"f":"pdfs/7-13.pdf"},{"n":"7.14","t":"Patient Assessment","s":7,"f":"pdfs/7-14.pdf"},{"n":"7.15","t":"Documentation and Patient Care Records","s":7,"f":"pdfs/7-15.pdf"},{"n":"7.16","t":"Patient Restraint","s":7,"f":"pdfs/7-16.pdf"},{"n":"7.17","t":"Patient Procedural Sedation","s":7,"f":"pdfs/7-17.pdf"},{"n":"7.18","t":"Pleural Decompression","s":7,"f":"pdfs/7-18.pdf"},{"n":"7.19","t":"Refusal of Care; Adult and Minor","s":7,"f":"pdfs/7-19.pdf"},{"n":"7.20","t":"Spinal Precautions","s":7,"f":"pdfs/7-20.pdf"},{"n":"7.21","t":"Blood Glucose Level Testing","s":7,"f":"pdfs/7-21.pdf"},{"n":"7.22","t":"Tourniquet Application","s":7,"f":"pdfs/7-22.pdf"},{"n":"7.23","t":"Vascular Access & IV Fluid Therapy","s":7,"f":"pdfs/7-23.pdf"},{"n":"7.24","t":"End Tidal Carbon Dioxide Monitoring","s":7,"f":"pdfs/7-24.pdf"},{"n":"7.25","t":"MI POST","s":7,"f":"pdfs/7-25.pdf"},{"n":"7.26","t":"Interfacility High Flow Nasal Oxygen (MCA Optional)","s":7,"f":"pdfs/7-26.pdf"},{"n":"7.27","t":"Transport of Adult Ventilator Dependent Patients","s":7,"f":"pdfs/7-27.pdf"},{"n":"7.28","t":"LVAD","s":7,"f":"pdfs/7-28.pdf"},{"n":"7.29","t":"Mechanical CPR Device (MCA Optional)","s":7,"pend":true},{"n":"7.30","t":"Conducted Electrical Weapon (TASER) (Berrien County)","s":7,"f":"pdfs/7-30.pdf"},{"n":"8.1","t":"Downgrade of Response","s":8,"f":"pdfs/8-1.pdf"},{"n":"8.2","t":"Patient Prioritization and Use of Lights and Sirens","s":8,"f":"pdfs/8-2.pdf"},{"n":"8.3","t":"Transport Destination and Diversion","s":8,"f":"pdfs/8-3.pdf"},{"n":"8.4","t":"OB High Risk Delivery Transport Guidelines (MCA Optional)","s":8,"f":"pdfs/8-4.pdf"},{"n":"8.5","t":"ALS/LALS Intercept (MCA Optional)","s":8,"f":"pdfs/8-5.pdf"},{"n":"8.6","t":"Dispatch","s":8,"f":"pdfs/8-6.pdf"},{"n":"8.7","t":"ALS to BLS Transfer of Care","s":8,"f":"pdfs/8-7.pdf"},{"n":"8.8","t":"Air Ambulance Personnel Scope of Practice (MCA Optional)","s":8,"f":"pdfs/8-8.pdf"},{"n":"8.9","t":"Helicopter Utilization","s":8,"f":"pdfs/8-9.pdf"},{"n":"8.10","t":"Infection Control & Communicable Disease","s":8,"f":"pdfs/8-10.pdf"},{"n":"8.11","t":"Immunization and Testing","s":8,"f":"pdfs/8-11.pdf"},{"n":"8.12","t":"Communications Failure","s":8,"f":"pdfs/8-12.pdf"},{"n":"8.13","t":"Electronic Records & EMS Information System","s":8,"f":"pdfs/8-13.pdf"},{"n":"8.14","t":"Protected Health Information (PHI)","s":8,"f":"pdfs/8-14.pdf"},{"n":"8.15","t":"Inter-Facility Patient Transfers","s":8,"f":"pdfs/8-15.pdf"},{"n":"8.15(S)","t":"Inter-Facility Enhanced Paramedic & Critical Care (MCA Optional)","s":8,"f":"pdfs/8-15S.pdf"},{"n":"8.16","t":"Licensure Level Requirement of Attendant During Transport (MCA Optional)","s":8,"f":"pdfs/8-16.pdf"},{"n":"8.17","t":"Medical Control Privileges","s":8,"f":"pdfs/8-17.pdf"},{"n":"8.18","t":"Responsibilities of Participants in the MCA System","s":8,"f":"pdfs/8-18.pdf"},{"n":"8.19","t":"On-Scene Physician Interaction","s":8,"f":"pdfs/8-19.pdf"},{"n":"8.20","t":"Protocol Deviation","s":8,"f":"pdfs/8-20.pdf"},{"n":"8.21","t":"Violent/Chemical/Hazardous Scene","s":8,"f":"pdfs/8-21.pdf"},{"n":"8.22","t":"Medical Examiner Notification and Body Disposition","s":8,"f":"pdfs/8-22.pdf"},{"n":"8.23","t":"Safe Delivery of Newborns","s":8,"f":"pdfs/8-23.pdf"},{"n":"8.24","t":"Complaint Investigation & Resolution","s":8,"f":"pdfs/8-24.pdf"},{"n":"8.25","t":"Disciplinary Action Appeal","s":8,"f":"pdfs/8-25.pdf"},{"n":"8.26","t":"EMS Provider Criminal Charges and Convictions","s":8,"f":"pdfs/8-26.pdf"},{"n":"8.27","t":"Quality Improvement Program","s":8,"f":"pdfs/8-27.pdf"},{"n":"8.28","t":"Personnel Rehabilitation During Scene Operations (Berrien County)","s":8,"f":"pdfs/8-28.pdf"},{"n":"9.1","t":"Medication Administration","s":9,"f":"pdfs/9-1.pdf"},{"n":"9.3","t":"Medication Shortage","s":9,"f":"pdfs/9-3.pdf"},{"n":"9.4","t":"Personal Metered Dose Inhaler","s":9,"f":"pdfs/9-4.pdf"},{"n":"9.5","t":"EMS: Medication and IV Supply Requirements","s":9,"f":"pdfs/9-5.pdf"},{"n":"9.6","t":"Pharmacy and MCA: Medication and IV Supply Requirements","s":9,"f":"pdfs/9-6.pdf"},{"n":"9.7","t":"Epinephrine Auto-Injector Procedure","s":9,"f":"pdfs/9-7.pdf"},{"n":"9.8","t":"Naloxone Medication Kit Contents and Distribution Procedure (MCA Optional)","s":9,"f":"pdfs/9-8.pdf"},{"n":"9.9R","t":"Medications (General)","s":9,"f":"pdfs/9-9R.pdf"},{"n":"9.10R","t":"Acetaminophen","s":9,"f":"pdfs/9-10R.pdf"},{"n":"9.11R","t":"Adenosine","s":9,"f":"pdfs/9-11R.pdf"},{"n":"9.12R","t":"Albuterol","s":9,"f":"pdfs/9-12R.pdf"},{"n":"9.13R","t":"Amiodarone","s":9,"f":"pdfs/9-13R.pdf"},{"n":"9.14R","t":"Aspirin","s":9,"f":"pdfs/9-14R.pdf"},{"n":"9.15R","t":"Atropine","s":9,"f":"pdfs/9-15R.pdf"},{"n":"9.16R","t":"Calcium Chloride","s":9,"f":"pdfs/9-16R.pdf"},{"n":"9.17R","t":"Cefazolin","s":9,"f":"pdfs/9-17R.pdf"},{"n":"9.18R","t":"Ceftriaxone","s":9,"f":"pdfs/9-18R.pdf"},{"n":"9.19R","t":"Dextrose","s":9,"f":"pdfs/9-19R.pdf"},{"n":"9.20R","t":"Diazepam","s":9,"f":"pdfs/9-20R.pdf"},{"n":"9.21R","t":"Diltiazem","s":9,"f":"pdfs/9-21R.pdf"},{"n":"9.22R","t":"Diphenhydramine","s":9,"f":"pdfs/9-22R.pdf"},{"n":"9.23R","t":"Epinephrine","s":9,"f":"pdfs/9-23R.pdf"},{"n":"9.24R","t":"Fentanyl (Rev. 12/10/2025)","s":9,"f":"pdfs/9-24R.pdf"},{"n":"9.25R","t":"Glucagon","s":9,"f":"pdfs/9-25R.pdf"},{"n":"9.26R","t":"Hydroxocobalamin","s":9,"f":"pdfs/9-26R.pdf"},{"n":"9.27R","t":"Ibuprofen","s":9,"f":"pdfs/9-27R.pdf"},{"n":"9.28R","t":"Ipratropium Bromide","s":9,"f":"pdfs/9-28R.pdf"},{"n":"9.29R","t":"Ketamine","s":9,"f":"pdfs/9-29R.pdf"},{"n":"9.30R","t":"Ketorolac","s":9,"f":"pdfs/9-30R.pdf"},{"n":"9.31R","t":"Lidocaine","s":9,"f":"pdfs/9-31R.pdf"},{"n":"9.32R","t":"Magnesium Sulfate","s":9,"f":"pdfs/9-32R.pdf"},{"n":"9.33R","t":"Methylprednisolone","s":9,"f":"pdfs/9-33R.pdf"},{"n":"9.34R","t":"Midazolam","s":9,"f":"pdfs/9-34R.pdf"},{"n":"9.35R","t":"Morphine","s":9,"f":"pdfs/9-35R.pdf"},{"n":"9.36R","t":"Naloxone","s":9,"f":"pdfs/9-36R.pdf"},{"n":"9.37R","t":"Nitroglycerin","s":9,"f":"pdfs/9-37R.pdf"},{"n":"9.38R","t":"Ondansetron","s":9,"f":"pdfs/9-38R.pdf"},{"n":"9.39R","t":"Pralidoxime","s":9,"f":"pdfs/9-39R.pdf"},{"n":"9.40R","t":"Prednisone","s":9,"f":"pdfs/9-40R.pdf"},{"n":"9.41R","t":"Sodium Bicarbonate","s":9,"f":"pdfs/9-41R.pdf"},{"n":"9.42R","t":"Racepinephrine","s":9,"f":"pdfs/9-42R.pdf"},{"n":"9.43R","t":"Tetracaine","s":9,"f":"pdfs/9-43R.pdf"},{"n":"9.44R","t":"Tranexamic Acid","s":9,"f":"pdfs/9-44R.pdf"},{"n":"9.45R","t":"Verapamil","s":9,"f":"pdfs/9-45R.pdf"},{"n":"10.1","t":"General CBRNE Identification of Agents","s":10,"f":"pdfs/10-1.pdf"},{"n":"10.2","t":"Chemical Exposure","s":10,"f":"pdfs/10-2.pdf"},{"n":"10.3","t":"Nerve Agent/Organophosphate Pesticide Exposure Treatment","s":10,"f":"pdfs/10-3.pdf"},{"n":"10.4","t":"Chempack/MEDDRUN","s":10,"f":"pdfs/10-4.pdf"},{"n":"10.5","t":"Cyanide Exposure","s":10,"f":"pdfs/10-5.pdf"},{"n":"10.6","t":"Mass Casualty Incidents","s":10,"f":"pdfs/10-6.pdf"},{"n":"10.7","t":"Pre-Hospital (EMS) MCA Mutual Aid During Disaster","s":10,"f":"pdfs/10-7.pdf"},{"n":"10.8","t":"Hazard Contaminated Patient","s":10,"f":"pdfs/10-8.pdf"},{"n":"10.9","t":"Suspected Pandemic","s":10,"f":"pdfs/10-9.pdf"}];
+const SEC = {"1": "General Treatment Protocols", "2": "Trauma and Environmental Emergencies", "3": "Adult Treatment Protocols", "4": "Obstetrics and Pediatrics", "5": "Adult Cardiac", "6": "Pediatric Cardiac", "7": "Procedures", "8": "System Protocols", "9": "Medication Section", "10": "Special Operations"};
+const list = document.getElementById('list');
+const q = document.getElementById('q');
+const clr = document.getElementById('clr');
+let IDX = null, idxLoading = null;
+
+function row(p, hit){
+  if(p.pend) return `<div class="prot pend"><span class="pn">${p.n}</span><span class="pt">${p.t}</span><span class="badge">Pending adoption</span></div>`;
+  return `<a class="prot" href="${p.f}"><span class="pn">${p.n}</span><span class="pt">${p.t}</span>${hit?'<span class="hitnote">text match</span>':''}</a>`;
+}
+function renderAll(openAll){
+  let h='';
+  for(let s=1;s<=10;s++){
+    const items=P.filter(p=>p.s===s);
+    h+=`<section class="sec${openAll?' open':''}" id="sec${s}">
+      <button class="sechead" onclick="this.parentNode.classList.toggle('open')" aria-expanded="false">
+      <span class="no">${s}</span><span class="nm">${SEC[s]}</span>
+      <span class="ct">${items.filter(p=>!p.pend).length}</span><span class="ar">&#9656;</span></button>
+      <div class="seclist">${items.map(p=>row(p,false)).join('')}</div></section>`;
+  }
+  list.innerHTML=h;
+}
+function loadIndex(){
+  if(IDX||idxLoading) return idxLoading;
+  idxLoading=fetch('search-index.json').then(r=>r.json()).then(j=>{IDX={};j.forEach(e=>IDX[e.n]=e.x);});
+  return idxLoading;
+}
+function doSearch(){
+  const term=q.value.trim().toLowerCase();
+  clr.style.display=term?'block':'none';
+  if(!term){renderAll(false);return;}
+  loadIndex().then(()=>{
+    if(q.value.trim().toLowerCase()!==term) return;
+    const titleHits=[], textHits=[];
+    for(const p of P){
+      if(p.pend) continue;
+      if((p.n+' '+p.t).toLowerCase().includes(term)) titleHits.push(p);
+      else if(IDX && IDX[p.n] && IDX[p.n].includes(term)) textHits.push(p);
+    }
+    if(!titleHits.length && !textHits.length){
+      list.innerHTML='<div class="empty">No protocol matches &ldquo;'+q.value.replace(/</g,'&lt;')+'&rdquo;</div>';return;
+    }
+    list.innerHTML =
+      (titleHits.length?'<section class="sec open"><div class="sechead"><span class="nm">Title matches</span></div><div class="seclist">'+titleHits.map(p=>row(p,false)).join('')+'</div></section>':'')+
+      (textHits.length?'<section class="sec open"><div class="sechead"><span class="nm">Text matches</span></div><div class="seclist">'+textHits.map(p=>row(p,true)).join('')+'</div></section>':'');
+  });
+}
+q.addEventListener('input',doSearch);
+clr.addEventListener('click',()=>{q.value='';doSearch();q.focus();});
+renderAll(false);
+document.getElementById('sec1').classList.add('open');
+
+// connectivity pill
+function pill(){document.getElementById('pill').style.display=navigator.onLine?'none':'block';}
+addEventListener('online',pill);addEventListener('offline',pill);pill();
+
+// service worker + save-all
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+  const btn=document.getElementById('saveall'), prog=document.getElementById('prog');
+  btn.addEventListener('click',async()=>{
+    btn.disabled=true;prog.textContent='Preparing...';
+    const reg=await navigator.serviceWorker.ready;
+    const files=P.filter(p=>p.f).map(p=>p.f).concat(['./','search-index.json','manifest.webmanifest']);
+    const ch=new MessageChannel();
+    ch.port1.onmessage=e=>{
+      const d=e.data;
+      if(d.done){prog.textContent='Saved. Protocols now work with no signal.';btn.disabled=false;}
+      else prog.textContent=`Saving ${d.i} of ${d.total}...`;
+    };
+    reg.active.postMessage({cacheAll:files},[ch.port2]);
+  });
+}
+</script>
+</body>
+</html>
