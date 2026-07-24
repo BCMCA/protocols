@@ -42,16 +42,19 @@ main{max-width:760px;margin:0 auto;padding:8px 12px 40px}
 .sec.open .ar{transform:rotate(90deg)}
 .seclist{display:none;border-top:2px solid var(--navy);margin-top:2px}
 .sec.open .seclist{display:block}
-a.prot{display:flex;gap:12px;align-items:center;padding:13px 6px;
+.prot{display:flex;gap:12px;align-items:center;padding:13px 6px;
   border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
 a.prot:active{background:#EFECE4}
 .pn{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;font-weight:700;
   color:#fff;background:var(--navy);border-left:3px solid var(--gold);
   padding:4px 7px;border-radius:3px;min-width:58px;text-align:center;flex:none}
 .pt{font-size:15px}
-.pend{opacity:.55}
-.pend .pn{background:var(--mut);border-left-color:#999}
-.pend .badge{font-size:11px;color:var(--mut);font-style:italic;margin-left:auto;flex:none}
+.pt{flex:1}
+.pcol{display:flex;flex-direction:column;gap:2px;flex:1}
+.pcol .pt{flex:none}
+.pend{opacity:.7}
+.pend .pn{background:#8A8F99;border-left-color:#B9BDC6}
+.pend .badge{font-size:11px;color:var(--mut);font-style:italic;line-height:1}
 .hitnote{font-size:12px;color:var(--mut);margin-left:auto;flex:none;background:var(--hit);
   padding:2px 7px;border-radius:10px}
 .empty{padding:34px 10px;color:var(--mut);text-align:center;font-size:15px}
@@ -63,7 +66,9 @@ a.prot:active{background:#EFECE4}
 .btn:disabled{opacity:.6}
 .prog{font-weight:400;font-size:12px;display:block;color:var(--mut)}
 footer{max-width:760px;margin:0 auto;padding:8px 16px 46px;font-size:12px;color:var(--mut)}
-footer .rule{border-top:1px solid var(--line);margin-bottom:10px}
+footer .rule{border-top:1px solid var(--line);margin-bottom:12px}
+footer p{margin:0 0 9px;line-height:1.55}
+footer .sig{margin-top:14px;color:#7A7F89}
 .offline-pill{display:none;position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
   background:var(--navy);color:#fff;font-size:12px;padding:6px 14px;border-radius:14px;z-index:9}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -92,9 +97,10 @@ footer .rule{border-top:1px solid var(--line);margin-bottom:10px}
 </main>
 <footer>
   <div class="rule"></div>
-  Reference copy of the Berrien County MCA protocol set. The executed protocols on file with
-  the MCA and MDHHS govern. 7.29 Mechanical CPR Device is pending adoption and not yet posted.<br>
-  Jonathan Beyer, DO, FAEMS, Medical Director &middot; Compiled 2026-07-23
+  <p>Reference copy of the Berrien County MCA protocol set. The executed protocols on file
+  with the MCA and MDHHS govern.</p>
+  <p>7.29 Mechanical CPR Device is pending upload.</p>
+  <p class="sig">Jonathan Beyer, DO, FAEMS, Medical Director<br>Compiled 2026-07-23</p>
 </footer>
 <div class="offline-pill" id="pill">Offline: showing saved copy</div>
 <script>
@@ -106,7 +112,7 @@ const clr = document.getElementById('clr');
 let IDX = null, idxLoading = null;
 
 function row(p, hit){
-  if(p.pend) return `<div class="prot pend"><span class="pn">${p.n}</span><span class="pt">${p.t}</span><span class="badge">Pending adoption</span></div>`;
+  if(p.pend) return `<div class="prot pend"><span class="pn">${p.n}</span><span class="pcol"><span class="pt">${p.t}</span><span class="badge">Pending upload</span></span></div>`;
   return `<a class="prot" href="${p.f}"><span class="pn">${p.n}</span><span class="pt">${p.t}</span>${hit?'<span class="hitnote">text match</span>':''}</a>`;
 }
 function renderAll(openAll){
@@ -149,7 +155,6 @@ function doSearch(){
 q.addEventListener('input',doSearch);
 clr.addEventListener('click',()=>{q.value='';doSearch();q.focus();});
 renderAll(false);
-
 
 // connectivity pill
 function pill(){document.getElementById('pill').style.display=navigator.onLine?'none':'block';}
