@@ -149,7 +149,7 @@ function doSearch(){
 q.addEventListener('input',doSearch);
 clr.addEventListener('click',()=>{q.value='';doSearch();q.focus();});
 renderAll(false);
-document.getElementById('sec1').classList.add('open');
+
 
 // connectivity pill
 function pill(){document.getElementById('pill').style.display=navigator.onLine?'none':'block';}
